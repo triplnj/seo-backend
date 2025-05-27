@@ -1,0 +1,7 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+[remote "triplnj"]
+	url = git@github.com:triplnj/seo-backend.git
+	fetch = +refs/heads/*:refs/remotes/triplnj/*
