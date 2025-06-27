@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import router from './routes/generateBrief.js';
-import fetch from 'node-fetch';
+import nodemailer from 'nodemailer';
 dotenv.config();
 
 const app = express();
@@ -15,35 +15,31 @@ app.post("/api/send-email", async (req, res) => {
   const { email, content } = req.body;
 
   if (!email || !content) {
-    return res.status(400).json({ error: "Missing email or content." });
+    return res.status(400).json({ error: "Nedostaju email ili sadržaj." });
   }
 
-  const payload = {
-    service_id: process.env.EMAILJS_SERVICE_ID,
-    template_id: process.env.EMAILJS_TEMPLATE_ID,
-    user_id: process.env.EMAILJS_PUBLIC_KEY,
-    accessToken: process.env.EMAILJS_PRIVATE_KEY,
-    template_params: {
-      to_email: email,
-      message: content
-    }
-  };
-
   try {
-    const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+    const transporter = nodemailer.createTransport({
+      host: "mail.smtp2go.com",
+      port: 587,
+      auth: {
+        user: process.env.SMTP_USER,      // tvoj SMTP2GO korisnički email
+        pass: process.env.SMTP_PASS       // tvoja SMTP lozinka
+      }
     });
 
-    if (response.ok) {
-      res.status(200).json({ message: "Email sent successfully!" });
-    } else {
-      const errorText = await response.text();
-      res.status(500).json({ error: errorText });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.toString() });
+    const mailOptions = {
+      from: `"SEO Extension" <office@njoybuying.com>`,  // tvoj pošiljalac
+      to: email, // korisnik
+      subject: "SEO Brief",
+      text: content
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.json({ message: "Email uspešno poslat!" });
+  } catch (error) {
+    console.error("Greška pri slanju mejla:", error);
+    res.status(500).json({ error: "Greška pri slanju mejla." });
   }
 });
 
