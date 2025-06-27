@@ -46,10 +46,6 @@ app.post("/api/send-email", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server radi na portu ${PORT}`);
-});
-
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
