@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import router from './routes/generateBrief.js';
 import nodemailer from 'nodemailer';
 import stripe from 'stripe';
-import user from './models/User.js';
+import User from './models/User.js';
 import mongoose from 'mongoose';
 dotenv.config();
 
@@ -65,7 +65,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 
   if (event.type === 'checkout.session.completed') {
     const email = event.data.object.customer_email;
-    await user.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { email },
       { isPro: true },
       { upsert: true, new: true }
