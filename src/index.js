@@ -75,6 +75,21 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
   res.json({ received: true });
 });
 
+// ✅ GET: Provera statusa korisnika
+app.get('/api/pro-status', async (req, res) => {
+  const { email } = req.query;
+  if (!email) return res.status(400).json({ error: 'Email required' });
+
+  try {
+    const user = await User.findOne({ email });
+    res.json({ isPro: user?.isPro || false });
+  } catch (err) {
+    console.error('MongoDB error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
