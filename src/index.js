@@ -52,6 +52,7 @@ app.post("/api/send-email", async (req, res) => {
     res.status(500).json({ error: "Greška pri slanju mejla." });
   }
 });
+
 // routes/stripeWebhook.js
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
@@ -75,6 +76,8 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
   res.json({ received: true });
 });
 
+
+
 // ✅ GET: Provera statusa korisnika
 app.get('/api/pro-status', async (req, res) => {
   const { email } = req.query;
@@ -86,6 +89,33 @@ app.get('/api/pro-status', async (req, res) => {
   } catch (err) {
     console.error('MongoDB error:', err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+app.post('/api/create-checkout-session', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      customer_email: email,
+      line_items: [
+        {
+          price: process.env.STRIPE_PRICE_ID, // moraš imati u .env
+          quantity: 1
+        }
+      ],
+      success_url: `${process.env.FRONTEND_URL}/success`, // npr. chrome-extension://.../success.html
+      cancel_url: `${process.env.FRONTEND_URL}/cancel`
+    });
+
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error('Stripe error:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
