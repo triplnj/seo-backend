@@ -13,7 +13,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(cors());
+
 
 // 🧠 Stripe webhook mora biti sirov middleware pre express.json
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -43,6 +43,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 });
 
 // 📦 Obavezno nakon webhooks
+app.use(cors());
 app.use(express.json());
 
 // 🌐 Povezivanje sa MongoDB
