@@ -115,7 +115,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
           quantity: 1
         }
       ],
-      success_url: `${process.env.FRONTEND_URL}`,
+      success_url: `${process.env.FRONTEND_URL}/`,
       cancel_url: `${process.env.FRONTEND_URL}/cancel`
     });
 
