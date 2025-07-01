@@ -1,21 +1,25 @@
-// 📁 index.js (glavni backend fajl)
+// 📁 index.js
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import router from './routes/generateBrief.js';
 import nodemailer from 'nodemailer';
 import User from './models/User.js';
-import connectDB from './mongodb/db.js'
+import connectDB from './mongodb/db.js';
 import Stripe from 'stripe';
 
-// 🌐 Povezivanje sa MongoDB
-connectDB();
+// 📌 Učitaj .env pre svega ostalog
 dotenv.config();
-const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// 🌐 Poveži se na MongoDB
+connectDB();
+
+const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 🧠 👉 1. Webhook raw body – MORA PRE express.json()
+// 🧠 Stripe webhook mora doći PRE express.json()
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
@@ -33,26 +37,30 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
     console.log('📩 Customer Email:', email);
 
     if (email) {
-      await User.findOneAndUpdate(
-        { email },
-        { isPro: true },
-        { upsert: true, new: true }
-      );
+      try {
+        await User.findOneAndUpdate(
+          { email },
+          { isPro: true },
+          { upsert: true, new: true }
+        );
+        console.log('✅ User updated in DB');
+      } catch (dbErr) {
+        console.error('❌ MongoDB update error:', dbErr.message);
+      }
     }
   }
 
   res.json({ received: true });
 });
 
-// 📦 Obavezno nakon webhooks
-
+// ✅ Ostali middlewari posle webhooka
 app.use(express.json());
-
 app.use(cors());
 
+// 📦 Rute
 app.use('/api/brief', router);
 
-// 📬 Slanje emaila
+// 📬 Email slanje
 app.post('/api/send-email', async (req, res) => {
   const { email, content } = req.body;
   if (!email || !content) return res.status(400).json({ error: "Nedostaju podaci." });
@@ -83,7 +91,7 @@ app.post('/api/send-email', async (req, res) => {
   }
 });
 
-// ✅ Provera Pro statusa
+// ✅ Provera Pro statusa korisnika
 app.get('/api/pro-status', async (req, res) => {
   const { email } = req.query;
   if (!email) return res.status(400).json({ error: 'Email required' });
@@ -92,12 +100,12 @@ app.get('/api/pro-status', async (req, res) => {
     const user = await User.findOne({ email });
     res.json({ isPro: user?.isPro || false });
   } catch (err) {
-    console.error('MongoDB error:', err);
+    console.error('MongoDB error:', err.message);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// ✅ Kreiranje checkout sesije
+// ✅ Kreiranje Stripe checkout sesije
 app.post('/api/create-checkout-session', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email is required' });
@@ -105,7 +113,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      mode: 'subscription',
+      mode: 'subscription', // koristiš SUBSCRIPTION jer koristiš price ID sa recurring
       customer_email: email,
       line_items: [
         {
@@ -119,11 +127,12 @@ app.post('/api/create-checkout-session', async (req, res) => {
 
     res.json({ url: session.url });
   } catch (error) {
-    console.error('Stripe error:', error.message, error.stack);
+    console.error('Stripe error:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
+// 🖥️ Startuj server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
