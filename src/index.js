@@ -5,15 +5,38 @@ import router from './routes/generateBrief.js';
 import nodemailer from 'nodemailer';
 import User from './models/User.js';
 import mongoose from 'mongoose';
-dotenv.config();
+
 import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
 
 app.use(cors());
+// routes/stripeWebhook.js
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return res.status(400).send(`Webhook error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const email = event.data.object.customer_email;
+    await User.findOneAndUpdate(
+      { email },
+      { isPro: true },
+      { upsert: true, new: true }
+    );
+  }
+
+  res.json({ received: true });
+});
+
 app.use(express.json());
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -55,28 +78,6 @@ app.post("/api/send-email", async (req, res) => {
   }
 });
 
-// routes/stripeWebhook.js
-app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  } catch (err) {
-    return res.status(400).send(`Webhook error: ${err.message}`);
-  }
-
-  if (event.type === 'checkout.session.completed') {
-    const email = event.data.object.customer_email;
-    await User.findOneAndUpdate(
-      { email },
-      { isPro: true },
-      { upsert: true, new: true }
-    );
-  }
-
-  res.json({ received: true });
-});
 
 
 
