@@ -1,3 +1,4 @@
+// 📁 index.js (glavni backend fajl)
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -5,53 +6,57 @@ import router from './routes/generateBrief.js';
 import nodemailer from 'nodemailer';
 import User from './models/User.js';
 import mongoose from 'mongoose';
-
 import Stripe from 'stripe';
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-dotenv.config();
 
+dotenv.config();
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 const PORT = process.env.PORT;
 
 app.use(cors());
-// routes/stripeWebhook.js
+
+// 🧠 Stripe webhook mora biti sirov middleware pre express.json
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    console.log('✅ Webhook event:', event.type);
   } catch (err) {
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
     const email = event.data.object.customer_email;
-    console.log("📩 Customer Email:", email);
-    await User.findOneAndUpdate(
-      { email },
-      { isPro: true },
-      { upsert: true, new: true }
-    );
+    console.log('📩 Customer Email:', email);
+    if (email) {
+      await User.findOneAndUpdate(
+        { email },
+        { isPro: true },
+        { upsert: true, new: true }
+      );
+    }
   }
 
   res.json({ received: true });
 });
 
+// 📦 Obavezno nakon webhooks
 app.use(express.json());
+
+// 🌐 Povezivanje sa MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+
 app.use('/api/brief', router);
 
-
-app.post("/api/send-email", async (req, res) => {
+// 📬 Slanje emaila
+app.post('/api/send-email', async (req, res) => {
   const { email, content } = req.body;
-
-  if (!email || !content) {
-    return res.status(400).json({ error: "Nedostaju podaci." });
-  }
+  if (!email || !content) return res.status(400).json({ error: "Nedostaju podaci." });
 
   try {
     const transporter = nodemailer.createTransport({
@@ -74,15 +79,12 @@ app.post("/api/send-email", async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.json({ message: "Email uspešno poslat!" });
   } catch (error) {
-    console.error("Greška pri slanju mejla:", error.message, error.response);
+    console.error("Greška pri slanju mejla:", error.message);
     res.status(500).json({ error: "Greška pri slanju mejla." });
   }
 });
 
-
-
-
-// ✅ GET: Provera statusa korisnika
+// ✅ Provera Pro statusa
 app.get('/api/pro-status', async (req, res) => {
   const { email } = req.query;
   if (!email) return res.status(400).json({ error: 'Email required' });
@@ -96,7 +98,7 @@ app.get('/api/pro-status', async (req, res) => {
   }
 });
 
-
+// ✅ Kreiranje checkout sesije
 app.post('/api/create-checkout-session', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email is required' });
@@ -108,22 +110,20 @@ app.post('/api/create-checkout-session', async (req, res) => {
       customer_email: email,
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID, // moraš imati u .env
+          price: process.env.STRIPE_PRICE_ID,
           quantity: 1
         }
       ],
-      success_url: `${process.env.FRONTEND_URL}/success`, // npr. chrome-extension://.../success.html
+      success_url: `${process.env.FRONTEND_URL}/success`,
       cancel_url: `${process.env.FRONTEND_URL}/cancel`
     });
 
     res.json({ url: session.url });
-  }  catch (error) {
+  } catch (error) {
     console.error('Stripe error:', error.message, error.stack);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
