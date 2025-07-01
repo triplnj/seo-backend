@@ -1,7 +1,7 @@
 // 📁 index.js (glavni backend fajl)
 import express from 'express';
 import cors from 'cors';
-
+import dotenv from 'dotenv';
 import router from './routes/generateBrief.js';
 import nodemailer from 'nodemailer';
 import User from './models/User.js';
