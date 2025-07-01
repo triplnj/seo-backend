@@ -27,6 +27,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 
   if (event.type === 'checkout.session.completed') {
     const email = event.data.object.customer_email;
+    console.log("📩 Customer Email:", email);
     await User.findOneAndUpdate(
       { email },
       { isPro: true },
