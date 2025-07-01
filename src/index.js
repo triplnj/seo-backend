@@ -45,10 +45,10 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 });
 
 // 📦 Obavezno nakon webhooks
-app.use(cors());
+
 app.use(express.json());
 
-
+app.use(cors());
 
 app.use('/api/brief', router);
 
