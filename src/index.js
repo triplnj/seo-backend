@@ -102,7 +102,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      mode: 'payment',
+      mode: 'subscription',
       customer_email: email,
       line_items: [
         {
@@ -115,8 +115,8 @@ app.post('/api/create-checkout-session', async (req, res) => {
     });
 
     res.json({ url: session.url });
-  } catch (error) {
-    console.error('Stripe error:', error.message);
+  }  catch (error) {
+    console.error('Stripe error:', error.message, error.stack);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
