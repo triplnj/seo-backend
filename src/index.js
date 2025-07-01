@@ -3,10 +3,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import router from './routes/generateBrief.js';
 import nodemailer from 'nodemailer';
-import stripe from 'stripe';
 import User from './models/User.js';
 import mongoose from 'mongoose';
 dotenv.config();
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 
 const app = express();
 const PORT = process.env.PORT;
