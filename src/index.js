@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import router from './routes/generateBrief.js';
 import nodemailer from 'nodemailer';
 import User from './models/User.js';
-import mongoose from 'mongoose';
+import connectDB from './mongodb/db.js'
 import Stripe from 'stripe';
 
 dotenv.config();
@@ -46,10 +46,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 app.use(express.json());
 
 // 🌐 Povezivanje sa MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useUnifiedTopology: true
-});
-
+connectDB();
 app.use('/api/brief', router);
 
 // 📬 Slanje emaila
