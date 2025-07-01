@@ -10,16 +10,12 @@ import Stripe from 'stripe';
 
 // 🌐 Povezivanje sa MongoDB
 connectDB();
-
+dotenv.config();
 const app = express();
-const PORT = process.env.PORT;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const PORT = process.env.PORT || 5000;
 
-
-
-
-
-// 🧠 Stripe webhook mora biti sirov middleware pre express.json
+// 🧠 👉 1. Webhook raw body – MORA PRE express.json()
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
@@ -28,12 +24,14 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     console.log('✅ Webhook event:', event.type);
   } catch (err) {
+    console.error('❌ Webhook error:', err.message);
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
     const email = event.data.object.customer_email;
     console.log('📩 Customer Email:', email);
+
     if (email) {
       await User.findOneAndUpdate(
         { email },
