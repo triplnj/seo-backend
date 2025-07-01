@@ -9,9 +9,11 @@ import connectDB from './mongodb/db.js'
 import Stripe from 'stripe';
 
 dotenv.config();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 const PORT = process.env.PORT;
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+
 
 
 
@@ -48,6 +50,7 @@ app.use(express.json());
 
 // 🌐 Povezivanje sa MongoDB
 connectDB();
+
 app.use('/api/brief', router);
 
 // 📬 Slanje emaila
