@@ -1,14 +1,16 @@
 // 📁 index.js (glavni backend fajl)
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+
 import router from './routes/generateBrief.js';
 import nodemailer from 'nodemailer';
 import User from './models/User.js';
 import connectDB from './mongodb/db.js'
 import Stripe from 'stripe';
 
-dotenv.config();
+// 🌐 Povezivanje sa MongoDB
+connectDB();
+
 const app = express();
 const PORT = process.env.PORT;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -48,8 +50,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 app.use(cors());
 app.use(express.json());
 
-// 🌐 Povezivanje sa MongoDB
-connectDB();
+
 
 app.use('/api/brief', router);
 
