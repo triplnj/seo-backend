@@ -12,6 +12,12 @@ const openai = new OpenAI({
 });
 
 router.post('/', async (req, res) => {
+
+  if (process.env.EXTENSION_ENABLED !== 'true') {
+  return res.status(503).json({
+    error: 'The service is temporarily unavailable.'
+  });
+}
     const { keyword, pageType, language = 'sr', mode = 'brief', audience='', tone='' } = req.body;
   
     const briefPrompts = {
