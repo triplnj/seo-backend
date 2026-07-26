@@ -106,9 +106,29 @@ Ton: ${tone || 'informativ und vertrauenswürdig'}.
         const result = chat.choices[0]?.message?.content || 'No response.';
         res.json({ brief: result, usedPrompt: prompt });
     } catch (error) {
-        console.error('OpenAI error:', error?.response.data || error.message || error);
-        res.status(500).json({ error: 'AI request failed' });
-    }
+  const errorDetails =
+    error?.response?.data ||
+    error?.error ||
+    error?.message ||
+    error;
+
+  console.error('OpenAI error:', errorDetails);
+  console.error('OpenAI status:', error?.status || error?.response?.status);
+  console.error('OpenAI code:', error?.code);
+
+  return res.status(error?.status || error?.response?.status || 500).json({
+    error:
+      error?.response?.data?.error?.message ||
+      error?.response?.data?.message ||
+      error?.error?.message ||
+      error?.message ||
+      'Failed to generate brief.',
+    code:
+      error?.response?.data?.error?.code ||
+      error?.code ||
+      null
+  });
+}
 });
 
 export default router;
