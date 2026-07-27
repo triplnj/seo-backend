@@ -1,0 +1,436 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  background: #f5f7fa;
+  color: #172033;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 350px;
+  padding: 16px;
+  background: #f5f7fa;
+  color: #172033;
+  overflow-y: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.app-header,
+.license-card__header,
+.section-heading,
+.button-row,
+.mode-selector,
+.license-form {
+  display: flex;
+  align-items: center;
+}
+
+.app-header {
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.eyebrow {
+  margin-bottom: 3px;
+  color: #667085;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.license-card {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid #d9e0ea;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.06);
+}
+
+.license-card__header {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.license-card__message {
+  margin: 10px 0 8px;
+  color: #475467;
+  line-height: 1.45;
+}
+
+.price-label {
+  margin-bottom: 12px;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.status-badge {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.status-badge--checking {
+  background: #eef2f6;
+  color: #475467;
+}
+
+.status-badge--active {
+  background: #dcfae6;
+  color: #067647;
+}
+
+.status-badge--inactive {
+  background: #fff4e5;
+  color: #9a3412;
+}
+
+.status-badge--error {
+  background: #fee4e2;
+  color: #b42318;
+}
+
+.field-label {
+  display: block;
+  margin: 10px 0 5px;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  padding: 9px 10px;
+  border: 1px solid #cfd7e3;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #172033;
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #7a8ba6;
+  box-shadow: 0 0 0 3px rgba(122, 139, 166, 0.18);
+}
+
+textarea {
+  min-height: 280px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.button {
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-weight: 750;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.button:hover:not(:disabled) {
+  opacity: 0.84;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button--primary {
+  background: #172033;
+  color: #ffffff;
+}
+
+.button--secondary {
+  border-color: #cfd7e3;
+  background: #ffffff;
+  color: #172033;
+}
+
+.button--danger {
+  border-color: #f0b5b1;
+  background: #fff5f4;
+  color: #b42318;
+}
+
+.button--small {
+  width: auto;
+  min-height: 32px;
+  padding: 6px 9px;
+  font-size: 12px;
+}
+
+.license-form {
+  align-items: stretch;
+  gap: 8px;
+}
+
+.license-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.license-form .button {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.button-row {
+  gap: 8px;
+}
+
+.form-feedback {
+  min-height: 18px;
+  margin: 9px 0 0;
+  color: #067647;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.form-feedback--error {
+  color: #b42318;
+}
+
+.app-content {
+  min-width: 0;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid #d9e0ea;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.app-content--locked {
+  opacity: 0.62;
+}
+
+.mode-selector {
+  justify-content: flex-start;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+.mode-selector label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+}
+
+.mode-selector input {
+  width: auto;
+  margin: 0;
+}
+
+.form-grid,
+.button-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.form-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.button-grid {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 8px;
+}
+
+.button-grid .button:last-child {
+  grid-column: 1 / -1;
+}
+
+#generate {
+  margin-top: 12px;
+}
+
+.history-section {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #e4e9f0;
+}
+
+.section-heading {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.history-list {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+
+.history-list li {
+  margin-bottom: 7px;
+  line-height: 1.35;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body.dark-mode {
+  color-scheme: dark;
+  background: #101318;
+  color: #f4f6f8;
+}
+
+body.dark-mode .eyebrow,
+body.dark-mode .license-card__message,
+body.dark-mode .field-label {
+  color: #b5c0cf;
+}
+
+body.dark-mode .license-card,
+body.dark-mode .app-content {
+  border-color: #343b46;
+  background: #191e25;
+  box-shadow: none;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea,
+body.dark-mode .button--secondary {
+  border-color: #414a57;
+  background: #11161c;
+  color: #f4f6f8;
+}
+
+body.dark-mode .button--primary {
+  background: #e5eaf0;
+  color: #172033;
+}
+
+body.dark-mode .button--danger {
+  border-color: #7a3434;
+  background: #2b1717;
+  color: #ffb4ab;
+}
+
+body.dark-mode .history-section {
+  border-top-color: #343b46;
+}
+
+@media (max-width: 380px) {
+  .form-grid,
+  .button-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .button-grid .button:last-child {
+    grid-column: auto;
+  }
+
+  .license-form,
+  .button-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .license-form .button {
+    width: 100%;
+  }
+}
+
+.trial-card {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid #b8d4f5;
+  border-radius: 10px;
+  background: #f4f9ff;
+  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.05);
+}
+
+.trial-badge {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+body.dark-mode .trial-card {
+  border-color: #31547a;
+  background: #17283b;
+}
+
+body.dark-mode .trial-badge {
+  background: #213f63;
+  color: #bfdbfe;
+}

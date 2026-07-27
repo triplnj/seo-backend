@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>SEO Brief &amp; Blog Generator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">SEO content assistant</p>
+      <h1>SEO Brief &amp; Blog</h1>
+    </div>
+
+    <button
+      id="themeToggle"
+      class="button button--small button--secondary"
+      type="button"
+    >
+      Theme
+    </button>
+  </header>
+
+  <section id="trialCard" class="trial-card" hidden>
+    <div class="license-card__header">
+      <div>
+        <p class="eyebrow">Free trial</p>
+        <h2>Try all features free</h2>
+      </div>
+
+      <span id="trialBadge" class="trial-badge">
+        3 left
+      </span>
+    </div>
+
+    <p id="trialMessage" class="license-card__message">
+      You have 3 free generations remaining.
+    </p>
+  </section>
+
+  <section
+    id="licenseCard"
+    class="license-card"
+    aria-labelledby="subscriptionStatus"
+    hidden
+  >
+    <div class="license-card__header">
+      <div>
+        <p class="eyebrow">Subscription</p>
+        <h2 id="subscriptionStatus">Checking subscription</h2>
+      </div>
+
+      <span
+        id="statusBadge"
+        class="status-badge status-badge--checking"
+      >
+        Checking
+      </span>
+    </div>
+
+    <p
+      id="subscriptionMessage"
+      class="license-card__message"
+    >
+      Loading subscription status...
+    </p>
+
+    <p id="priceLabel" class="price-label">€9.99/month</p>
+
+    <div id="inactiveLicenseActions">
+      <button
+        id="upgradeBtn"
+        class="button button--primary"
+        type="button"
+      >
+        Upgrade to Pro
+      </button>
+
+      <label for="licenseKeyInput" class="field-label">
+        Already subscribed? Enter your license key
+      </label>
+
+      <div class="license-form">
+        <input
+          id="licenseKeyInput"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        >
+
+        <button
+          id="activateLicenseBtn"
+          class="button button--secondary"
+          type="button"
+        >
+          Activate
+        </button>
+      </div>
+    </div>
+
+    <div id="activeLicenseActions" class="button-row" hidden>
+      <button
+        id="manageSubscriptionBtn"
+        class="button button--secondary"
+        type="button"
+      >
+        Manage subscription
+      </button>
+
+      <button
+        id="deactivateLicenseBtn"
+        class="button button--danger"
+        type="button"
+      >
+        Deactivate this device
+      </button>
+    </div>
+
+    <p
+      id="licenseFeedback"
+      class="form-feedback"
+      aria-live="polite"
+    ></p>
+  </section>
+
+  <fieldset id="appContent" class="app-content" disabled>
+    <legend class="sr-only">SEO generator</legend>
+
+    <div class="mode-selector">
+      <label>
+        <input
+          type="radio"
+          name="mode"
+          value="brief"
+          checked
+        >
+        Brief
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          name="mode"
+          value="full"
+        >
+        Complete blog
+      </label>
+    </div>
+
+    <label class="field-label" for="keyword">Keyword</label>
+    <input
+      type="text"
+      id="keyword"
+      placeholder="Enter keyword"
+    >
+
+    <label class="field-label" for="audience">Target audience</label>
+    <input
+      type="text"
+      id="audience"
+      placeholder="For example: pet owners"
+    >
+
+    <label class="field-label" for="tone">Tone of voice</label>
+    <input
+      type="text"
+      id="tone"
+      placeholder="For example: friendly, professional"
+    >
+
+    <div class="form-grid">
+      <div>
+        <label class="field-label" for="pageType">Page type</label>
+        <select id="pageType">
+          <option value="blog">Blog</option>
+          <option value="product">Product</option>
+          <option value="collection">Collection</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="field-label" for="language">Language</label>
+        <select id="language">
+          <option value="en">English</option>
+          <option value="de">German</option>
+          <option value="sr">Serbian</option>
+        </select>
+      </div>
+    </div>
+
+    <button
+      id="generate"
+      class="button button--primary"
+      type="button"
+    >
+      Generate
+    </button>
+
+    <label class="field-label" for="result">Generated content</label>
+    <textarea
+      id="result"
+      placeholder="Your generated content will appear here."
+    ></textarea>
+
+    <div class="button-grid">
+      <button id="copyBtn" class="button button--secondary" type="button">
+        Copy to clipboard
+      </button>
+
+      <button id="downloadBtn" class="button button--secondary" type="button">
+        Download text file
+      </button>
+
+      <button id="sendToChatGPT" class="button button--secondary" type="button">
+        Copy prompt and open ChatGPT
+      </button>
+
+      <button id="injectShopify" class="button button--secondary" type="button">
+        Inject into Shopify
+      </button>
+
+      <button id="injectToChatGPT" class="button button--secondary" type="button">
+        Inject into ChatGPT
+      </button>
+    </div>
+
+    <section class="history-section">
+      <div class="section-heading">
+        <h2>History</h2>
+
+        <button
+          id="clearHistoryBtn"
+          class="button button--small button--danger"
+          type="button"
+        >
+          Clear history
+        </button>
+      </div>
+
+      <ul id="historyList" class="history-list"></ul>
+    </section>
+  </fieldset>
+
+  <script src="popup.js" defer></script>
+</body>
+</html>

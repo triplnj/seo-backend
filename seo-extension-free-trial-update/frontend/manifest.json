@@ -1,0 +1,25 @@
+{
+  "name": "SEO Brief&Blog Generator",
+  "version": "1.4.0",
+  "manifest_version": 3,
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://seo-backend-2o5u.onrender.com/*"
+  ],
+  "description": "Generate SEO briefs or complete blogs for your Shopify content from Chrome.",
+  "action": {
+    "default_title": "SEO Brief&Blog Generator",
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png",
+      "440": "icon440.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
